@@ -1,6 +1,6 @@
 ﻿namespace TollFeeCalculator;
 
-public record TollFeeRate(TimeOnly StartTime, TimeOnly EndTime, TollFee TollFee)
+public record TollFeeRate(TimeOnly StartTime, TimeOnly EndTime, decimal Fee)
 {
     public bool IsWithinTimeInterval(TimeOnly passageTime)
     {
