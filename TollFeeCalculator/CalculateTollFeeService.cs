@@ -29,17 +29,17 @@ public class CalculateTollFeeService(ITollFeePolicy policy) : ICalculateTollFeeS
         {
             if (passageTime.Count() == 1)
             {
-                totalFee += GetTollFeeForPass(passageTime.First());
+                totalFee += GetTollFee(passageTime.First());
                 continue;
             }
 
-            totalFee += passageTime.Max(GetTollFeeForPass);
+            totalFee += passageTime.Max(GetTollFee);
         }
 
         return totalFee > dailyMaxFee ? new TollFeeCalculationResult(date, dailyMaxFee, currency) : new TollFeeCalculationResult(date, totalFee, currency);
     }
 
-    private decimal GetTollFeeForPass(TimeOnly passageTime)
+    private decimal GetTollFee(TimeOnly passageTime)
     {
         var rate = _policy.TollFeeRates.FirstOrDefault(rate => rate.IsWithinTimeInterval(passageTime));
 
