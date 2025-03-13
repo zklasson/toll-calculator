@@ -41,10 +41,10 @@ public class CalculateTollFeeServiceTests
     {
         var passageTimes = new[]
         {
-            new TimeOnly(0,0),
-            new TimeOnly(9,29),
-            new TimeOnly(12,13),
-            new TimeOnly(22,1),
+            new TimeOnly(0,0,32),
+            new TimeOnly(9,29,36),
+            new TimeOnly(12,13,56),
+            new TimeOnly(22,1,12),
         };
 
         var date = new DateOnly(2025, 03, 13);
@@ -62,12 +62,12 @@ public class CalculateTollFeeServiceTests
     {
         var passageTimes = new[]
         {
-            new TimeOnly(0,0),
-            new TimeOnly(9,29),
-            new TimeOnly(12,59),
-            new TimeOnly(21,15),
-            new TimeOnly(22,20),
-            new TimeOnly(23,59),
+            new TimeOnly(0,0,3),
+            new TimeOnly(9,29,59),
+            new TimeOnly(12,59,8),
+            new TimeOnly(21,15,35),
+            new TimeOnly(22,20,32),
+            new TimeOnly(23,59,59,999),
         };
 
         var result = _sut.CalculateTotalTollFee(VehicleType.Car, new DateOnly(2025, 03, 13), passageTimes);
@@ -81,9 +81,9 @@ public class CalculateTollFeeServiceTests
     {
         var passageTimes = new[]
         {
-            new TimeOnly(6,0),
-            new TimeOnly(9,29),
-            new TimeOnly(9,59),
+            new TimeOnly(6,0,3,456),
+            new TimeOnly(9,29,56,456),
+            new TimeOnly(9,59,59,999),
         };
 
         var result = _sut.CalculateTotalTollFee(VehicleType.Car, new DateOnly(2025, 03, 13), passageTimes);
@@ -97,7 +97,7 @@ public class CalculateTollFeeServiceTests
     {
         var passageTimes = new[]
         {
-            new TimeOnly(5,0),
+            new TimeOnly(5,0,34,879),
         };
 
         Assert.Throws<MissingTollFeeRateException>(() =>

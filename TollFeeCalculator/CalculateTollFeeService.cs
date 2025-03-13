@@ -24,8 +24,10 @@ public class CalculateTollFeeService(ITollFeePolicy policy) : ICalculateTollFeeS
         if (passageTimes.Length == 0 || _policy.IsTollFreeDate(date) || _policy.IsTollFreeVehicleType(vehicleType))
             return new TollFeeCalculationResult(date, 0, currency);
 
+        var harmonizedPassageTimes = passageTimes.Select(time => new TimeOnly(time.Hour, time.Minute));
+
         decimal totalFee = 0;
-        foreach (var passageTime in passageTimes.GroupBy(time => time.Hour))
+        foreach (var passageTime in harmonizedPassageTimes.GroupBy(time => time.Hour))
         {
             if (passageTime.Count() == 1)
             {
