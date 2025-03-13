@@ -1,3 +1,7 @@
+using TollFeeCalculator.Exceptions;
+using TollFeeCalculator.Models;
+using TollFeeCalculator.Policies;
+
 namespace TollFeeCalculator.UnitTests;
 
 public class CalculateTollFeeServiceTests

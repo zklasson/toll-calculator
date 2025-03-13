@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using TollFeeCalculator.Policies;
 
-namespace TollFeeCalculator.UnitTests;
+namespace TollFeeCalculator.UnitTests.Policies;
 public class GothenburgTollFeePolicyTests
 {
     private readonly GothenburgTollFeePolicy _policy = new();

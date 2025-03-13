@@ -1,4 +1,4 @@
-﻿namespace TollFeeCalculator;
+﻿namespace TollFeeCalculator.Exceptions;
 
 public class MissingTollFeeRateException : Exception
 {

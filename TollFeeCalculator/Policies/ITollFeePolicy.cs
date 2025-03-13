@@ -1,4 +1,6 @@
-﻿namespace TollFeeCalculator;
+﻿using TollFeeCalculator.Models;
+
+namespace TollFeeCalculator.Policies;
 
 public interface ITollFeePolicy
 {

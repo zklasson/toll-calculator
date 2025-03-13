@@ -1,4 +1,4 @@
-﻿namespace TollFeeCalculator;
+﻿namespace TollFeeCalculator.Models;
 
 public record TollFeeRate(TimeOnly StartTime, TimeOnly EndTime, decimal Fee)
 {

@@ -1,6 +1,7 @@
 ﻿using PublicHoliday;
+using TollFeeCalculator.Models;
 
-namespace TollFeeCalculator;
+namespace TollFeeCalculator.Policies;
 
 public class GothenburgTollFeePolicy : ITollFeePolicy
 {
