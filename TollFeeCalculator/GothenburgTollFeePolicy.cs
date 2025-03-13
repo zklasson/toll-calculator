@@ -1,15 +1,11 @@
-﻿namespace TollFeeCalculator;
+﻿using PublicHoliday;
 
-public static class GothenburgTollFeePolicy
+namespace TollFeeCalculator;
+
+public class GothenburgTollFeePolicy : ITollFeePolicy
 {
-    public const string Currency = "SEK";
-    public const decimal DailyMaxFee = 60;
-    public const decimal LowFee = 8;
-    public const decimal MediumFee = 13;
-    public const decimal HighFee = 18;
-    public const decimal NoFee = 0;
-
-    public static readonly TollFeeRate[] TollFeeRates =
+    public decimal DailyMaxFee => 60;
+    public TollFeeRate[] TollFeeRates =>
     [
         new(new TimeOnly(6, 0), new TimeOnly(6, 29), new TollFee(LowFee, Currency)), // 06:00 - 06:29
         new(new TimeOnly(6, 30), new TimeOnly(6, 59), new TollFee(MediumFee, Currency)), // 06:30 - 06:59
@@ -23,8 +19,21 @@ public static class GothenburgTollFeePolicy
         new(new TimeOnly(18, 30), new TimeOnly(5, 59), new TollFee(NoFee, Currency)), // 18:30 - 05:59
     ];
 
-    public static readonly VehicleType[] TollableVehicleTypes =
-    [
-        VehicleType.Car,
-    ];
+    private const string Currency = "SEK";
+    private const decimal LowFee = 8;
+    private const decimal MediumFee = 13;
+    private const decimal HighFee = 18;
+    private const decimal NoFee = 0;
+
+    private static readonly SwedenPublicHoliday HolidayService = new();
+
+    public bool IsTollFreeDate(DateOnly date)
+    {
+        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+            return true;
+
+        return HolidayService.IsPublicHoliday(new DateTime(date.Year, date.Month, date.Day));
+    }
+
+    public bool IsTollFreeVehicleType(VehicleType vehicleType) => vehicleType != VehicleType.Car;
 }

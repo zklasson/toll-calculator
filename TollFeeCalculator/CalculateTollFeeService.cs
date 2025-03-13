@@ -1,24 +1,21 @@
-﻿using PublicHoliday;
-using static TollFeeCalculator.GothenburgTollFeePolicy;
-
-namespace TollFeeCalculator;
+﻿namespace TollFeeCalculator;
 
 public interface ICalculateTollFeeService
 {
     decimal CalculateTotalTollFeeForDate(VehicleType vehicleType, DateOnly date, TimeOnly[] passageTimes);
 }
 
-public class CalculateTollFeeService : ICalculateTollFeeService
+public class CalculateTollFeeService(ITollFeePolicy policy) : ICalculateTollFeeService
 {
-    private static readonly SwedenPublicHoliday HolidayService = new();
+    private readonly ITollFeePolicy _policy = policy ?? throw new ArgumentNullException(nameof(policy));
 
     public decimal CalculateTotalTollFeeForDate(VehicleType vehicleType, DateOnly date, TimeOnly[] passageTimes)
     {
         if (passageTimes == null)
             throw new ArgumentNullException(nameof(passageTimes));
 
-        if (passageTimes.Length == 0 || IsTollFreeDate(date) || IsTollFreeVehicleType(vehicleType))
-            return NoFee;
+        if (passageTimes.Length == 0 || _policy.IsTollFreeDate(date) || _policy.IsTollFreeVehicleType(vehicleType))
+            return 0;
 
         decimal totalFee = 0;
         foreach (var passageTime in passageTimes.GroupBy(time => time.Hour))
@@ -31,30 +28,20 @@ public class CalculateTollFeeService : ICalculateTollFeeService
 
             totalFee += passageTime.Max(GetTollFeeForPass);
 
-            if (totalFee > DailyMaxFee)
-                return DailyMaxFee;
+            if (totalFee > _policy.DailyMaxFee)
+                return _policy.DailyMaxFee;
         }
 
         return totalFee;
     }
 
-    private static decimal GetTollFeeForPass(TimeOnly passageTime)
+    private decimal GetTollFeeForPass(TimeOnly passageTime)
     {
-        var rate = TollFeeRates.FirstOrDefault(rate => rate.IsWithinInterval(passageTime));
+        var rate = _policy.TollFeeRates.FirstOrDefault(rate => rate.IsWithinTimeInterval(passageTime));
 
         if (rate?.TollFee == null)
             throw new MissingTollFeeRateException(passageTime);
 
         return rate.TollFee.Fee;
     }
-
-    private static bool IsTollFreeDate(DateOnly date)
-    {
-        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
-            return true;
-
-        return HolidayService.IsPublicHoliday(new DateTime(date.Year, date.Month, date.Day));
-    }
-
-    private static bool IsTollFreeVehicleType(VehicleType vehicleType) => !TollableVehicleTypes.Contains(vehicleType);
 }
